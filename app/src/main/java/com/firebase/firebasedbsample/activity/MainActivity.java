@@ -1,5 +1,6 @@
 package com.firebase.firebasedbsample.activity;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
         //getting the reference of artists node
         databaseArtists = FirebaseDatabase.getInstance().getReference("artists");
+
+        searchInFireBase("Karthik");
 
         //getting views
         editTextName = (EditText) findViewById(R.id.editTextName);
@@ -240,4 +243,34 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+
+    private void searchInFireBase(String searchString) {
+
+
+
+        DatabaseReference mDatabase =FirebaseDatabase.getInstance().getReference("artists");
+        mDatabase.orderByChild("artistName").equalTo(searchString).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot: dataSnapshot.getChildren()) {
+                    ///Here you can get all data
+                    Artist artist = dataSnapshot.getValue(Artist.class);
+                    System.out.println("Search result : "+artist.getArtistName());
+
+                    System.out.println(dataSnapshot.getKey());
+                    System.out.println(dataSnapshot.child("artistName").getValue(String.class));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+        });
+
+    }
+
+
 }
